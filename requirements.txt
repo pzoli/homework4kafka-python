@@ -1,0 +1,4 @@
+dotenv==0.9.9
+kafka-python==2.2.1
+msgpack==1.1.0
+python-dotenv==1.1.0
