@@ -1,4 +1,5 @@
 import os
+import json
 
 from dotenv import load_dotenv
 from kafka import KafkaConsumer, KafkaProducer
@@ -12,7 +13,8 @@ producer = KafkaProducer(bootstrap_servers=[os.getenv("KAFKA_URL")],
                          )
 print(f"producer connected: {producer.bootstrap_connected()}")
 for i in range(5):
-    producer.send(os.getenv("KAFKA_TOPIC"), ('msg' + str(i)).encode() )
+    msg = '{"msg":' + str(i) + '}'
+    producer.send(os.getenv("KAFKA_TOPIC"), msg.encode('utf-8') )
 producer.flush()
 producer.close()
 print("Messages are sent")
@@ -36,4 +38,8 @@ for message in consumer:
     print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition,
                                           message.offset, message.key,
                                           message.value))
-
+    try:
+        data = json.loads(message.value.decode('utf-8'))
+        print(data)
+    except Exception as e:
+        print(str(e))
